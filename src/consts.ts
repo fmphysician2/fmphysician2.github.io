@@ -83,7 +83,7 @@ export const DOCTORS: Record<DoctorKey, Doctor> = {
     award: '糖尿病品質卓越獎醫師',
     avatar: '/images/doctors/陳爰邑.webp',
     mainPillars: ['P3', 'P6'],
-    subPillars: ['P4'],
+    subPillars: ['P2', 'P4'],
   },
 };
 
