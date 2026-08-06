@@ -13,7 +13,7 @@ const posts = defineCollection({
       .max(75, '摘要太長，請控制在 40–60 字'),
 
     doctor: z.enum(['余貴華', '陳爰邑']),
-    pillar: z.enum(['P1', 'P2', 'P3', 'P4', 'P5', 'P6']),
+    pillar: z.enum(['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7']),
 
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),

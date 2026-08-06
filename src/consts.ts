@@ -83,7 +83,7 @@ export const DOCTORS: Record<DoctorKey, Doctor> = {
     award: '糖尿病品質卓越獎醫師',
     avatar: '/images/doctors/陳爰邑.webp',
     mainPillars: ['P3', 'P6'],
-    subPillars: ['P2', 'P4'],
+    subPillars: ['P2', 'P4', 'P7'],
   },
 };
 
@@ -117,6 +117,8 @@ export const PILLARS: Pillar[] = [
     description: '把新的研究、指引與治療進展翻成病人聽得懂的話，說明它到底改變了什麼。' },
   { id: 'P6', slug: '婦女健康', name: '婦女健康',
     description: '婦科常見問題、孕期與更年期照護，以及女性特有的篩檢與風險評估。' },
+  { id: 'P7', slug: '皮膚與外觀保養', name: '皮膚與外觀保養',
+    description: '痘痘、環境接觸性皮膚炎等常見膚況的成因與居家保養原則，以及其他與外觀保養相關的衛教資訊。' },
 ];
 
 export const PILLAR_MAP = Object.fromEntries(PILLARS.map((p) => [p.id, p]));
