@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import { SITE, DOCTORS, PILLAR_MAP, LINKS } from '../consts';
+
+// 沒有文章的分類不會產生頁面，所以撰寫領域只在該分類真的有文章時才連結，
+// 否則顯示為純文字。這樣既不會產生 404，也保留「編輯範圍」的宣示。
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const hasPosts = new Set(posts.map((p) => p.data.pillar));
+
+const desc = `${SITE.name}是一對家醫科醫師夫妻檔。`;
+const schema = [{
+  '@type': 'AboutPage',
+  name: `關於我們｜${SITE.name}`,
+  description: desc,
+  url: `${SITE.url}/about/`,
+  isPartOf: { '@id': `${SITE.url}/#website` },
+  mainEntity: { '@id': `${SITE.url}/#organization` },
+}];
+---
+<Base title="關於我們" description={desc} schema={schema}>
+  <Hero slot="hero" compact={true} />
+  <div class="wrap" style="padding:24px 0 56px;max-width:820px">
+    <article class="article">
+      <h1>關於我們</h1>
+      <div class="prose">
+        <p>{SITE.name}是一對家醫科醫師夫妻檔。</p>
+
+        {Object.values(DOCTORS).map((d) => (
+          <section id={d.name} style="margin-top:2.4em">
+            <h2>{d.name} 醫師</h2>
+            <p><strong>{d.entityLine}</strong>｜{d.jobTitle}</p>
+            <p>{d.training}</p>
+            <p>{d.alumniOf} 醫學系</p>
+            <p>{d.award}</p>
+            <p>專長：{d.expertise.join('、')}</p>
+            <p>
+              主要撰寫領域：
+              {d.mainPillars.map((id, i) => (
+                <>{i > 0 && '、'}{hasPosts.has(id)
+                  ? <a href={`/pillar/${PILLAR_MAP[id].slug}/`}>{PILLAR_MAP[id].name}</a>
+                  : PILLAR_MAP[id].name}</>
+              ))}
+              {d.subPillars.length > 0 && <>，並涵蓋 {d.subPillars.map((id, i) => (
+                <>{i > 0 && '、'}{hasPosts.has(id)
+                  ? <a href={`/pillar/${PILLAR_MAP[id].slug}/`}>{PILLAR_MAP[id].name}</a>
+                  : PILLAR_MAP[id].name}</>
+              ))}。</>}
+            </p>
+          </section>
+        ))}
+
+        <h2>在其他地方找到我們</h2>
+        <ul>
+          <li><a href={LINKS.facebook} rel="me noopener" target="_blank">Facebook 粉絲專頁</a></li>
+          <li><a href={LINKS.instagram} rel="me noopener" target="_blank">Instagram ＠fmphysician2</a></li>
+          <li><a href={LINKS.threads} rel="me noopener" target="_blank">Threads ＠fmphysician2</a></li>
+          <li><a href={LINKS.linkgoods} rel="noopener" target="_blank">linkgoods 連結整理</a></li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</Base>

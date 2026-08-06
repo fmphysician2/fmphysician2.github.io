@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+
+const title = '找不到頁面';
+const description = '這個網址可能已經移動或不存在。返回首頁繼續閱讀家醫科醫師x2的文章。';
+---
+<Base title={title} description={description} noindex={true}>
+  <div class="wrap" style="padding:64px 16px;text-align:center">
+    <div style="font-size:.95rem;color:var(--ink-3);letter-spacing:.08em;margin-bottom:8px">404</div>
+    <h1 style="margin:0 0 12px;font-size:1.5rem">找不到這個頁面</h1>
+    <p style="margin:0 0 28px;color:var(--ink-2)">
+      您要找的網址可能已經移動、更新或不存在。
+    </p>
+    <a class="chip chip-solid" href="/" style="padding:10px 24px">回到首頁</a>
+  </div>
+</Base>

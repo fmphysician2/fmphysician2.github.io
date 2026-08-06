@@ -1,0 +1,57 @@
+name: Build and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx astro build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      # 網站上線後，把 sitemap 裡的每個網址推給 IndexNow（Bing、Yandex 等會讀取）。
+      # 失敗不影響部署結果，所以加了 continue-on-error。
+      - name: Notify IndexNow
+        continue-on-error: true
+        env:
+          SITE: fmphysician2.github.io
+          INDEXNOW_KEY: bf6c11df7fb496b8db6fa46e48ad02e3
+        run: |
+          set -e
+          URLS_JSON=$(curl -sf --retry 5 --retry-delay 5 "https://${SITE}/sitemap-0.xml" \
+            | grep -oP '(?<=<loc>)[^<]+' \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          curl -sf -X POST "https://api.indexnow.org/IndexNow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{\"host\":\"${SITE}\",\"key\":\"${INDEXNOW_KEY}\",\"keyLocation\":\"https://${SITE}/${INDEXNOW_KEY}.txt\",\"urlList\":${URLS_JSON}}"

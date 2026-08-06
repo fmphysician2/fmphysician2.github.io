@@ -1,0 +1,121 @@
+---
+import { SITE, LINKS, SAME_AS, DOCTORS } from '../consts';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  schema?: object[];
+  noindex?: boolean;
+}
+const {
+  title, description = SITE.description, ogImage = '/images/og-default.jpg',
+  ogType = 'website', schema = [], noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const ogUrl = new URL(ogImage, SITE.url).href;
+const fullTitle = title === SITE.name ? `${SITE.name}｜${SITE.tagline}` : `${title}｜${SITE.name}`;
+
+// 全站共用的組織與人物結構化資料
+const orgId = `${SITE.url}/#organization`;
+const baseSchema = [
+  {
+    '@type': 'MedicalOrganization',
+    '@id': orgId,
+    name: SITE.name,
+    alternateName: [`${DOCTORS.余貴華.entityLine}`, `${DOCTORS.陳爰邑.entityLine}`],
+    url: SITE.url,
+    logo: new URL('/images/avatar.jpg', SITE.url).href,
+    image: new URL('/images/cover.webp', SITE.url).href,
+    description: SITE.description,
+    sameAs: SAME_AS,
+    areaServed: { '@type': 'Country', name: '臺灣' },
+    medicalSpecialty: 'PrimaryCare',
+    member: Object.values(DOCTORS).map((d) => ({ '@id': `${SITE.url}/about/#${encodeURIComponent(d.name)}` })),
+  },
+  ...Object.values(DOCTORS).map((d) => ({
+    '@type': 'Physician',
+    '@id': `${SITE.url}/about/#${encodeURIComponent(d.name)}`,
+    name: d.entityLine,
+    alternateName: `${d.name} 醫師`,
+    givenName: d.name.slice(1),
+    familyName: d.name.slice(0, 1),
+    jobTitle: d.jobTitle,
+    image: new URL(d.avatar, SITE.url).href,
+    medicalSpecialty: 'PrimaryCare',
+    alumniOf: [
+      { '@type': 'MedicalOrganization', name: d.training },
+      { '@type': 'CollegeOrUniversity', name: d.alumniOf },
+    ],
+    knowsAbout: d.expertise,
+    award: d.award,
+    knowsLanguage: ['zh-Hant', 'en'],
+    url: `${SITE.url}/about/`,
+    sameAs: SAME_AS,
+    worksFor: { '@id': orgId },
+  })),
+  {
+    '@type': 'WebSite',
+    '@id': `${SITE.url}/#website`,
+    url: SITE.url,
+    name: SITE.name,
+    inLanguage: SITE.lang,
+    publisher: { '@id': orgId },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: `${SITE.url}/search/?q={search_term_string}` },
+      'query-input': 'required name=search_term_string',
+    },
+  },
+];
+const graph = { '@context': 'https://schema.org', '@graph': [...baseSchema, ...schema] };
+---
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex,follow" />}
+<meta name="author" content={`${DOCTORS.余貴華.entityLine}、${DOCTORS.陳爰邑.entityLine}`} />
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogUrl} />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:locale" content={SITE.locale} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogUrl} />
+<meta name="theme-color" content="#4a7a9b" />
+<link rel="icon" href="/images/avatar.jpg" />
+<link rel="apple-touch-icon" href="/images/avatar.jpg" />
+<link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
+</head>
+<body>
+<a class="skip" href="#main">跳到主要內容</a>
+<slot name="hero" />
+<main id="main"><slot /></main>
+<footer>
+  <div class="wrap">
+    <div>© {new Date().getFullYear()} {SITE.name}．{SITE.byline}</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <a href="/about/">關於我們</a>
+      <a href={LINKS.facebook} rel="me noopener" target="_blank">Facebook</a>
+      <a href={LINKS.instagram} rel="me noopener" target="_blank">Instagram</a>
+      <a href={LINKS.threads} rel="me noopener" target="_blank">Threads</a>
+      <a href={LINKS.linkgoods} rel="noopener" target="_blank">linkgoods</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import PostCard from '../../components/PostCard.astro';
+import { PILLARS, SITE } from '../../consts';
+
+// 沒有文章的分類不產生頁面。
+// 空的分類頁對搜尋引擎是薄內容、對 AI 是空的實體關聯、對讀者是「還沒做完」的印象，
+// 三邊都只有扣分。等該分類有第一篇文章，頁面就會自動出現，不需手動維護。
+// （llms.txt 早就是這個邏輯，這裡只是補上一致性。）
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const counts = posts.reduce((acc: Record<string, number>, x) => {
+    acc[x.data.pillar] = (acc[x.data.pillar] ?? 0) + 1; return acc;
+  }, {});
+
+  return PILLARS
+    .filter((p) => (counts[p.id] ?? 0) > 0)
+    .map((p) => ({
+      params: { pillar: p.slug },
+      props: {
+        pillar: p,
+        posts: posts.filter((x) => x.data.pillar === p.id)
+          .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+        counts,
+      },
+    }));
+}
+const { pillar, posts, counts } = Astro.props;
+const schema = [{
+  '@type': 'CollectionPage',
+  name: `${pillar.name}｜${SITE.name}`,
+  description: pillar.description,
+  url: `${SITE.url}/pillar/${pillar.slug}/`,
+  isPartOf: { '@id': `${SITE.url}/#website` },
+  about: { '@type': 'MedicalEntity', name: pillar.name },
+}];
+---
+<Base title={pillar.name} description={pillar.description} schema={schema}>
+  <Hero slot="hero" compact={true} />
+  <div class="wrap layout">
+    <div>
+      <div class="page-head">
+        <h1>{pillar.name}</h1>
+        <p>{pillar.description}</p>
+      </div>
+      <div style="height:16px"></div>
+      <div class="cards">{posts.map((p: any) => <PostCard post={p} />)}</div>
+    </div>
+    <Sidebar counts={counts} current={pillar.id} />
+  </div>
+</Base>

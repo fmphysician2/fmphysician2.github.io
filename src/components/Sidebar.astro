@@ -1,0 +1,36 @@
+---
+import { PILLARS, LINKS } from '../consts';
+const { counts = {}, current = null } = Astro.props;
+
+// 只顯示有文章的分類。沒有文章的分類不會產生頁面（見 pages/pillar/[pillar].astro），
+// 全部列出來會連到 404，而且一排「0」看起來像網站還沒做完。
+const visiblePillars = PILLARS.filter((p) => (counts[p.id] ?? 0) > 0);
+---
+<aside class="side">
+  <div class="panel">
+    <h2>搜尋文章</h2>
+    <form action="/search/" method="get" role="search">
+      <input id="q" type="search" name="q" placeholder="例如：塗氟補助幾歲" aria-label="搜尋文章" />
+    </form>
+  </div>
+  <div class="panel">
+    <h2>內容</h2>
+    <nav class="pill-list" aria-label="文章分類">
+      <a href="/" aria-current={current === null ? 'page' : undefined}>
+        <span>全部文章</span>
+        <span class="n">{Object.values(counts).reduce((a: number, b: any) => a + b, 0)}</span>
+      </a>
+      {visiblePillars.map((p) => (
+        <a href={`/pillar/${p.slug}/`} aria-current={current === p.id ? 'page' : undefined}>
+          <span>{p.name}</span>
+          <span class="n">{counts[p.id]}</span>
+        </a>
+      ))}
+    </nav>
+  </div>
+  <div class="panel">
+    <h2>更多資訊</h2>
+    <p style="margin:0 0 12px;font-size:.86rem;color:var(--ink-2);line-height:1.7">門診時間、合作邀約、更多聯絡方式在這裡。</p>
+    <a class="chip chip-solid" href={LINKS.linkgoods} rel="noopener" target="_blank" style="width:100%;justify-content:center">前往 linkgoods</a>
+  </div>
+</aside>

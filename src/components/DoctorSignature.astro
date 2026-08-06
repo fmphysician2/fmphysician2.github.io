@@ -1,0 +1,15 @@
+---
+// 文末醫師署名區。措辭一律來自 consts.ts，不要在單篇文章裡改寫。
+import { DOCTORS, DISCLAIMER } from '../consts';
+const { doctor } = Astro.props;
+const d = DOCTORS[doctor as keyof typeof DOCTORS];
+---
+<aside class="sig">
+  <div class="sig-av"><img src={d.avatar} alt={`${d.entityLine}大頭照`} width="112" height="112" loading="lazy" /></div>
+  <div class="sig-body">
+    <p class="sig-name">▸ {d.name} 醫師</p>
+    <p class="sig-line">{d.entityLine}｜{d.jobTitle}</p>
+    <p class="sig-exp">專長：{d.expertise.join('、')}</p>
+  </div>
+</aside>
+<p class="disclaimer">{DISCLAIMER}</p>

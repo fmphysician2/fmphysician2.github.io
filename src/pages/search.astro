@@ -1,0 +1,70 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getCollection } from 'astro:content';
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const counts: Record<string, number> = {};
+for (const p of posts) counts[p.data.pillar] = (counts[p.data.pillar] ?? 0) + 1;
+---
+<Base title="搜尋" description="搜尋站內衛教文章。" noindex={true}>
+  <Hero slot="hero" compact={true} />
+  <div class="wrap layout">
+    <div>
+      <div class="page-head">
+        <h1>搜尋文章</h1>
+        <p id="hint">輸入關鍵字，會同時比對標題、結論與內文。</p>
+      </div>
+      <div style="height:16px"></div>
+      <div id="results" class="cards"></div>
+    </div>
+    <Sidebar counts={counts} />
+  </div>
+</Base>
+
+<script is:inline>
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const box = document.getElementById('q');
+  const out = document.getElementById('results');
+  const hint = document.getElementById('hint');
+  const data = await fetch('/search-index.json').then((r) => r.json());
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function render(q) {
+    q = (q || '').trim();
+    if (!q) { out.innerHTML = ''; hint.textContent = '輸入關鍵字，會同時比對標題、結論與內文。'; return; }
+    const terms = q.split(/\s+/).filter(Boolean);
+    const scored = data.map((it) => {
+      let s = 0;
+      for (const t of terms) {
+        if (it.t.includes(t)) s += 10;
+        if (it.a.includes(t)) s += 5;
+        if (it.g.some((g) => g.includes(t))) s += 4;
+        if (it.p.includes(t)) s += 3;
+        if (it.b.includes(t)) s += 1;
+      }
+      return { it, s };
+    }).filter((x) => x.s > 0).sort((a, b) => b.s - a.s);
+
+    hint.textContent = scored.length ? `找到 ${scored.length} 篇符合「${q}」的文章。` : `沒有找到符合「${q}」的文章，換個說法試試。`;
+    out.innerHTML = scored.map(({ it }) => `
+      <article class="card">
+        <div class="card-main">
+          <div class="card-meta"><time>${esc(it.y)}</time><span>・</span><span>${esc(it.p)}</span><span>・</span><span>${esc(it.d)} 醫師</span></div>
+          <h3><a href="${esc(it.u)}">${esc(it.t)}</a></h3>
+          <p>${esc(it.a)}</p>
+          ${it.g.length ? `<div class="tags">${it.g.slice(0, 3).map((g) => `<span class="tag">#${esc(g)}</span>`).join('')}</div>` : ''}
+        </div>
+        ${it.c ? `<a class="card-thumb" href="${esc(it.u)}" tabindex="-1" aria-hidden="true"><img src="${esc(it.c)}" alt="" loading="lazy"></a>` : ''}
+      </article>`).join('');
+  }
+
+  if (box) {
+    box.value = params.get('q') || '';
+    box.addEventListener('input', () => render(box.value));
+    box.closest('form')?.addEventListener('submit', (e) => { e.preventDefault(); render(box.value); history.replaceState(null, '', '/search/?q=' + encodeURIComponent(box.value)); });
+  }
+  render(params.get('q'));
+})();
+</script>
