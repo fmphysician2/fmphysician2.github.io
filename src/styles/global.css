@@ -113,11 +113,12 @@ footer a:hover{color:var(--accent-dark)}
   .side{order:-1}
   .article{padding:24px 20px 32px;border-radius:0;border-left:0;border-right:0}
   .article h1{font-size:1.42rem}
-  .hero-cover{aspect-ratio:16/10}
-  /* 手機只顯示封面左側的人像，標題文字改用下方真文字呈現 */
-  .hero-cover img{object-position:22% center;transform:scale(1.02)}
+  /* 手機用專屬直式封面（cover-mobile.webp，見 Hero.astro 的 <picture>），比例對得上就不用裁切技巧 */
+  .hero-cover{aspect-ratio:1080/1004}
+  .hero-cover img{object-position:center}
   .hero-body{flex-direction:column;align-items:flex-start;gap:10px;padding-bottom:14px}
-  .hero-avatar{width:88px;height:88px;margin-top:-34px;border-width:4px}
+  /* 手機封面已經包含兩位醫師合照與姓名，卡通頭像會重複，直接隱藏 */
+  .hero-avatar{display:none}
   .hero-text h1{font-size:1.35rem}
   .card{flex-direction:row;gap:12px;padding:14px}
   .card h3{font-size:1rem}

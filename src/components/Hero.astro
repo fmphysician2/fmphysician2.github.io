@@ -5,7 +5,10 @@ const { compact = false } = Astro.props;
 <header class="hero">
   <a href="/" aria-label={`${SITE.name} 首頁`}>
     <div class="hero-cover">
-      <img src="/images/cover.webp" width="1530" height="592" alt={`${SITE.name} — ${SITE.byline}`} fetchpriority="high" />
+      <picture>
+        <source media="(max-width: 860px)" srcset="/images/cover-mobile.webp" />
+        <img src="/images/cover.webp" width="1530" height="592" alt={`${SITE.name} — ${SITE.byline}`} fetchpriority="high" />
+      </picture>
     </div>
   </a>
   <div class="hero-body">
