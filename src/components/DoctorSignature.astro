@@ -9,7 +9,10 @@ const d = DOCTORS[doctor as keyof typeof DOCTORS];
   <div class="sig-body">
     <p class="sig-name">▸ {d.name} 醫師</p>
     <p class="sig-line">{d.entityLine}｜{d.jobTitle}</p>
-    <p class="sig-exp">專長：{d.expertise.join('、')}</p>
+    <p class="sig-exp">專長</p>
+    <div class="tags" style="justify-content:center;margin-top:6px">
+      {d.expertise.map((e: string) => <span class="tag">{e}</span>)}
+    </div>
   </div>
 </aside>
 <p class="disclaimer">{DISCLAIMER}</p>
