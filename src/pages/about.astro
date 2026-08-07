@@ -26,6 +26,7 @@ const schema = [{
       <h1>關於我們</h1>
       <div class="prose">
         <p>{SITE.name}是一對家醫科醫師夫妻檔。</p>
+        <p>目前在桃園楊梅埔心執業。</p>
 
         {Object.values(DOCTORS).map((d) => (
           <section id={d.name} style="margin-top:2.4em">
@@ -33,7 +34,7 @@ const schema = [{
             <p><strong>{d.entityLine}</strong>｜{d.jobTitle}</p>
             <p>{d.training}</p>
             <p>{d.alumniOf} 醫學系</p>
-            <p>{d.award}</p>
+            {d.award.map((a: string) => <p>{a}</p>)}
             <p style="margin-bottom:.4em">專長</p>
             <div class="tags" style="margin:0 0 1.15em">{d.expertise.map((e: string) => <span class="tag">{e}</span>)}</div>
             <p>
