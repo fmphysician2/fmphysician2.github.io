@@ -97,6 +97,21 @@ a{color:inherit;text-decoration:none}
 .related a{color:var(--accent-dark);font-size:.94rem;line-height:1.6}
 .related a:hover{text-decoration:underline;text-underline-offset:3px}
 
+/* ---------- 全部文章列表（/archive/）----------
+   純文字列表，不放縮圖與摘要。文章數再多也只有一頁，
+   爬蟲一次就能取得全站連結，讀者回顧舊文也不用翻頁。 */
+.arc{display:flex;flex-direction:column;gap:0;margin:0;padding:0;list-style:none}
+.arc li{border-bottom:1px solid var(--line)}
+.arc li:last-child{border-bottom:0}
+.arc-row{display:flex;align-items:baseline;gap:12px;padding:11px 2px}
+.arc-row:hover .arc-title{color:var(--accent-dark);text-decoration:underline;text-underline-offset:3px}
+.arc-date{flex:none;font-size:.82rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.arc-pillar{flex:none;font-size:.78rem;color:var(--ink-3);width:7.5em}
+.arc-title{color:var(--ink);font-size:.95rem;line-height:1.6}
+.arc-year{margin:26px 0 4px;font-size:.9rem;color:var(--ink-3);letter-spacing:.06em}
+.arc-year:first-child{margin-top:8px}
+.more-link{display:flex;justify-content:center;margin-top:22px}
+
 /* ---------- 其他 ---------- */
 .page-head{padding:28px 0 4px}
 .page-head h1{margin:0 0 6px;font-size:1.5rem}
@@ -124,6 +139,10 @@ footer a:hover{color:var(--accent-dark)}
   .card h3{font-size:1rem}
   .card-thumb{width:88px;height:88px}
   .prose{font-size:1rem}
+  /* 手機寬度放不下三欄，分類移到標題下方那行 */
+  .arc-row{flex-wrap:wrap;gap:0 10px;padding:12px 2px}
+  .arc-title{order:-1;width:100%;margin-bottom:3px}
+  .arc-pillar{width:auto}
 }
 @media (max-width:420px){
   .card p{-webkit-line-clamp:2}

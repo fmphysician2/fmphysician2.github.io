@@ -16,7 +16,8 @@ const visiblePillars = PILLARS.filter((p) => (counts[p.id] ?? 0) > 0);
   <div class="panel">
     <h2>內容</h2>
     <nav class="pill-list" aria-label="文章分類">
-      <a href="/" aria-current={current === null ? 'page' : undefined}>
+      {/* 這裡的數字是全站總篇數，所以連到 /archive/（一頁列完），而不是只有最新 20 篇的首頁 */}
+      <a href="/archive/" aria-current={current === 'archive' ? 'page' : undefined}>
         <span>全部文章</span>
         <span class="n">{Object.values(counts).reduce((a: number, b: any) => a + b, 0)}</span>
       </a>

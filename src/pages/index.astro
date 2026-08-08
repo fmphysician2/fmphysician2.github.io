@@ -9,13 +9,19 @@ import { SITE } from '../consts';
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
+// 首頁只列最新 20 篇，其餘走 /archive/。
+// 不做分頁子頁：那會把舊文推到第二層，也會產生一批薄內容頁面。
+const LATEST = 20;
+const latest = posts.slice(0, LATEST);
+const hasMore = posts.length > LATEST;
+
 const counts: Record<string, number> = {};
 for (const p of posts) counts[p.data.pillar] = (counts[p.data.pillar] ?? 0) + 1;
 
 const itemList = {
   '@type': 'ItemList',
   '@id': `${SITE.url}/#articles`,
-  itemListElement: posts.slice(0, 20).map((p, i) => ({
+  itemListElement: latest.map((p, i) => ({
     '@type': 'ListItem',
     position: i + 1,
     url: `${SITE.url}/${p.data.slug ?? p.id}/`,
@@ -29,7 +35,14 @@ const itemList = {
     <div>
       {posts.length === 0
         ? <div class="empty">文章準備中。</div>
-        : <div class="cards">{posts.map((p) => <PostCard post={p} />)}</div>}
+        : <>
+            <div class="cards">{latest.map((p) => <PostCard post={p} />)}</div>
+            {hasMore && (
+              <div class="more-link">
+                <a class="chip" href="/archive/">查看全部文章（{posts.length} 篇）</a>
+              </div>
+            )}
+          </>}
     </div>
     <Sidebar counts={counts} />
   </div>
