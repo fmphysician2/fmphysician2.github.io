@@ -32,7 +32,7 @@ const schema = [{
           <section id={d.name} style="margin-top:2.4em">
             <h2>{d.name} 醫師</h2>
             <p><strong>{d.entityLine}</strong>｜{d.jobTitle}</p>
-            <p>{d.training}</p>
+            {d.training.map((t: string) => <p>{t}</p>)}
             <p>{d.alumniOf} 醫學系</p>
             {d.award.map((a: string) => <p>{a}</p>)}
             <p style="margin-bottom:.4em">專長</p>

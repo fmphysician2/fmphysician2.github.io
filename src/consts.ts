@@ -48,7 +48,7 @@ export interface Doctor {
   specialty: string;       // schema.org medicalSpecialty
   jobTitle: string;
   expertise: string[];     // 專長
-  training: string;        // 專科訓練醫院，schema.org alumniOf
+  training: string[];      // 專科訓練醫院／專科資格，schema.org alumniOf
   alumniOf: string;        // 畢業學校，schema.org alumniOf
   award: string[];         // 專業獎項，schema.org award
   avatar: string;          // 個人頭像路徑，署名區與 schema.org image 共用
@@ -64,7 +64,7 @@ export const DOCTORS: Record<DoctorKey, Doctor> = {
     specialty: '家庭醫學科',
     jobTitle: '家庭醫學專科醫師',
     expertise: ['慢性病與代謝管理', '心血管風險評估', '預防醫學'],
-    training: '台北榮總家庭醫學專科醫師',
+    training: ['台北榮總家庭醫學專科醫師', '肥胖症專科醫師'],
     alumniOf: '國立陽明大學（今國立陽明交通大學）',
     award: ['糖尿病品質卓越獎醫師', '糖尿病合併初期慢性腎臟病品質獎勵'],
     avatar: '/images/doctors/余貴華.webp',
@@ -78,7 +78,7 @@ export const DOCTORS: Record<DoctorKey, Doctor> = {
     specialty: '家庭醫學科',
     jobTitle: '家庭醫學專科醫師',
     expertise: ['家庭感染防護', '兒童常見疾病', '婦女健康'],
-    training: '台北榮總家庭醫學專科醫師',
+    training: ['台北榮總家庭醫學專科醫師'],
     alumniOf: '國立陽明大學（今國立陽明交通大學）',
     award: ['糖尿病品質卓越獎醫師', '糖尿病合併初期慢性腎臟病品質獎勵'],
     avatar: '/images/doctors/陳爰邑.webp',

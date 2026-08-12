@@ -47,7 +47,7 @@ const baseSchema = [
     image: new URL(d.avatar, SITE.url).href,
     medicalSpecialty: 'PrimaryCare',
     alumniOf: [
-      { '@type': 'MedicalOrganization', name: d.training },
+      ...d.training.map((t: string) => ({ '@type': 'MedicalOrganization', name: t })),
       { '@type': 'CollegeOrUniversity', name: d.alumniOf },
     ],
     knowsAbout: d.expertise,
