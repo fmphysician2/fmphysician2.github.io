@@ -9,11 +9,15 @@ interface Props {
   ogType?: 'website' | 'article';
   schema?: object[];
   noindex?: boolean;
+  author?: string;
 }
 const {
   title, description = SITE.description, ogImage = '/images/og-default.jpg',
-  ogType = 'website', schema = [], noindex = false,
+  ogType = 'website', schema = [], noindex = false, author,
 } = Astro.props;
+
+// 文章頁傳入該篇作者；其餘頁面（首頁、分類、關於）沒有單一作者，列出兩位。
+const authorMeta = author ?? `${DOCTORS.余貴華.entityLine}、${DOCTORS.陳爰邑.entityLine}`;
 
 const canonical = new URL(Astro.url.pathname, SITE.url).href;
 const ogUrl = new URL(ogImage, SITE.url).href;
@@ -83,7 +87,7 @@ const graph = { '@context': 'https://schema.org', '@graph': [...baseSchema, ...s
 <meta name="google-site-verification" content="tYHHRvVNxLgmq3rf_EsiUcRX7y7qJNjzXHq-V9HeXsM" />
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex,follow" />}
-<meta name="author" content={`${DOCTORS.余貴華.entityLine}、${DOCTORS.陳爰邑.entityLine}`} />
+<meta name="author" content={authorMeta} />
 <meta property="og:type" content={ogType} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />

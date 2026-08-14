@@ -24,7 +24,8 @@ const { compact = false } = Astro.props;
     </div>
   </div>
   <nav class="hero-links" aria-label="社群與導覽連結">
-    <a class="chip chip-solid" href="/">全部文章</a>
+    {/* 全站文章一頁列完的樞紐頁。首頁只有最新 20 篇，所以這裡不連 /。 */}
+    <a class="chip chip-solid" href="/archive/">全部文章</a>
     <a class="chip" href="/about/">關於我們</a>
     <a class="chip" href={LINKS.facebook} rel="me noopener" target="_blank">Facebook</a>
     <a class="chip" href={LINKS.instagram} rel="me noopener" target="_blank">Instagram</a>
