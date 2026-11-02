@@ -9,7 +9,7 @@ import { SITE, DOCTORS, PILLAR_MAP, LINKS } from '../consts';
 const posts = await getCollection('posts', ({ data }) => !data.draft);
 const hasPosts = new Set(posts.map((p) => p.data.pillar));
 
-const desc = `${SITE.name}是一對家醫科醫師夫妻檔。`;
+const desc = `${SITE.name}是一對家醫科醫師夫妻檔，目前在桃園楊梅埔心執業。`;
 const schema = [{
   '@type': 'AboutPage',
   name: `關於我們｜${SITE.name}`,

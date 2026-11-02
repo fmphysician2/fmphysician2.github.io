@@ -36,7 +36,10 @@ const baseSchema = [
     image: new URL('/images/cover.webp', SITE.url).href,
     description: SITE.description,
     sameAs: SAME_AS,
-    areaServed: { '@type': 'Country', name: '臺灣' },
+    areaServed: [
+      { '@type': 'Country', name: '臺灣' },
+      { '@type': 'AdministrativeArea', name: '桃園市' },
+    ],
     medicalSpecialty: 'PrimaryCare',
     member: Object.values(DOCTORS).map((d) => ({ '@id': `${SITE.url}/about/#${encodeURIComponent(d.name)}` })),
   },
